@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Backend do Agente Romaneio.
-
-Endpoints:
-  GET  /                -> serve o frontend (index.html)
-  POST /api/extract     -> recebe uma imagem, chama o Claude e devolve os dados extraídos em JSON
-  POST /api/pdf         -> recebe os dados (JSON) e devolve um PDF formatado
-  GET  /api/health       -> healthcheck simples
-"""
-
 import os
 import io
 import json
@@ -34,7 +23,6 @@ FRONTEND_DIR = BASE_DIR.parent / "frontend"
 
 app = FastAPI(title="Agente Romaneio")
 
-# Serve arquivos estáticos do frontend (se houver css/js separados no futuro)
 if FRONTEND_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
