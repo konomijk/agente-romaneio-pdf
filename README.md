@@ -4,10 +4,10 @@ Agente de IA que lê a foto de um romaneio de compras manuscrito, extrai os
 dados automaticamente (usando visão multimodal do Claude) e gera um PDF
 formatado e pronto para uso — sem digitação manual.
 
-## 💡 O problema que resolve
+## Motivação por tras do projeto
 
-Romaneios de compras costumam ser preenchidos à mão e depois digitados
-manualmente em planilhas ou sistemas — um processo lento e sujeito a erro.
+Meu pai costuma fazer romaneios de compras à mão que depois são digitalizados
+manualmente em planilhas, um processo lento e que pode ser agilizado para os funcionários com a ajuda da IA.
 Este agente automatiza essa etapa: você tira uma foto, confere os dados
 extraídos numa interface simples, e exporta um PDF organizado.
 
@@ -39,10 +39,10 @@ Frontend (HTML/JS) ──envia imagem──▶ Backend (FastAPI)
 ```
 agente-romaneio-pdf/
 ├── backend/
-│   ├── main.py           # API: extração via IA + geração de PDF
+│   ├── main.py           
 │   └── requirements.txt
 ├── frontend/
-│   └── index.html        # Interface do usuário
+│   └── index.html        
 ├── Dockerfile
 ├── .dockerignore
 └── .env.example
@@ -114,12 +114,6 @@ custa frações de centavo.
   errar em caligrafias difíceis, a interface permite revisão manual antes
   de gerar o PDF final.
 
-## 🛣️ Possíveis melhorias futuras
-
-- [ ] Suporte a múltiplos tipos de documento (não só romaneios)
-- [ ] Geração de PDF com texto pesquisável sobre a imagem original (OCR)
-- [ ] Testes automatizados (pytest) e CI via GitHub Actions
-- [ ] Autenticação simples para uso multiusuário
 
 ---
 
