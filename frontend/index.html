@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agente Romaneio</title>
+<style>
+  :root{
+    --bg: #faf6f0;
+    --paper: #ffffff;
+    --ink: #2b2420;
+    --ink-soft: #6b6058;
+    --line: #e4dccf;
+    --crate: #c65d2e;
+    --crate-dark: #a44a22;
+    --leaf: #4a6b4d;
+    --leaf-soft: #eaf0e8;
+    --warn-bg: #fbf0dd;
+    --warn-ink: #8a5a11;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+  }
+  .wrap{ max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+  .masthead{
+    display:flex; align-items:baseline; justify-content:space-between;
+    border-bottom: 3px solid var(--ink); padding-bottom: 10px; margin-bottom: 6px;
+  }
+  .masthead h1{ font-size: 26px; letter-spacing: 0.3px; margin:0; font-weight: 700; }
+  .masthead .stamp{
+    font-family: 'Courier New', monospace; font-size: 11px; color: var(--crate);
+    border: 1.5px solid var(--crate); padding: 3px 8px; border-radius: 3px;
+    letter-spacing: 1px; transform: rotate(-2deg); white-space: nowrap;
+  }
+  .tagline{
+    font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 12.5px;
+    color: var(--ink-soft); margin: 0 0 26px; font-style: italic;
+  }
+  .card{ background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 22px; margin-bottom: 18px; }
+  .dropzone{
+    border: 2px dashed var(--line); border-radius: 6px; padding: 30px 16px;
+    text-align:center; cursor:pointer; transition: border-color .15s ease, background .15s ease;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .dropzone:hover, .dropzone.drag{ border-color: var(--crate); background: #fff8f4; }
+  .dropzone .icon{ font-size: 28px; margin-bottom: 8px; display:block; }
+  .dropzone .label{ font-size: 14px; color: var(--ink); font-weight: 600; }
+  .dropzone .sub{ font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+  input[type=file]{ display:none; }
+  .preview-row{ display:flex; gap:16px; align-items:flex-start; margin-top: 4px; }
+  .preview-thumb{ width: 90px; height: 90px; object-fit: cover; border-radius: 5px; border: 1px solid var(--line); flex-shrink:0; }
+  .preview-info{ font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px; flex:1; }
+  .preview-info .fname{ font-weight:600; word-break:break-all; }
+  .preview-info .fmeta{ color:var(--ink-soft); font-size:12px; margin-top:2px; }
+  .link-btn{
+    background:none; border:none; color:var(--crate); font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:12px; cursor:pointer; padding:0; margin-top:8px; text-decoration:underline;
+  }
+  .btn{
+    font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 600; font-size: 14px;
+    border: none; border-radius: 5px; padding: 11px 20px; cursor: pointer;
+    display:inline-flex; align-items:center; gap:8px; transition: transform .08s ease, background .15s ease;
+  }
+  .btn:active{ transform: scale(0.98); }
+  .btn-primary{ background: var(--crate); color: white; }
+  .btn-primary:hover{ background: var(--crate-dark); }
+  .btn-primary:disabled{ background: #d8ceC2; cursor:not-allowed; }
+  .btn-ghost{ background: var(--leaf-soft); color: var(--leaf); }
+  .btn-ghost:hover{ background: #ddebd9; }
+  .btn-row{ margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+  .status{ font-family:'Helvetica Neue',Arial,sans-serif; font-size: 13px; color: var(--ink-soft); margin-top: 12px; display:flex; align-items:center; gap:8px; }
+  .spinner{ width:14px; height:14px; border: 2px solid var(--line); border-top-color: var(--crate); border-radius:50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .error-box{
+    background:#fbe9e5; border:1px solid #e6a99a; color:#8a2e17; border-radius:5px;
+    padding:12px 14px; font-family:'Helvetica Neue',Arial,sans-serif; font-size:13px; margin-top:12px;
+  }
+  .section-title{
+    font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color: var(--ink-soft);
+    font-family:'Helvetica Neue',Arial,sans-serif; font-weight:700; margin: 0 0 14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-title::after{ content:''; flex:1; height:1px; background:var(--line); }
+  .meta-row{ display:flex; gap:14px; margin-bottom:16px; flex-wrap:wrap; }
+  .meta-field{ font-family:'Helvetica Neue',Arial,sans-serif; }
+  .meta-field label{ display:block; font-size:11px; color:var(--ink-soft); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; }
+  .meta-field input{
+    font-family: 'Georgia', serif; font-size: 14px; border:1px solid var(--line);
+    border-radius:4px; padding:7px 9px; background: var(--bg); color: var(--ink);
+  }
+  table{ width:100%; border-collapse: collapse; font-size: 13px; }
+  thead th{
+    text-align:left; font-family:'Helvetica Neue',Arial,sans-serif; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-soft);
+    border-bottom: 1.5px solid var(--ink); padding: 6px 6px;
+  }
+  tbody td{ border-bottom: 1px solid var(--line); padding: 4px 6px; vertical-align: middle; }
+  tbody tr:hover{ background: #fbf8f3; }
+  td input{
+    width:100%; border:none; background:transparent; font-family:'Georgia',serif;
+    font-size:13px; color: var(--ink); padding: 4px 2px; border-radius:3px;
+  }
+  td input:focus{ outline:none; background: #fff6ee; box-shadow: 0 0 0 1.5px var(--crate); }
+  td.riscado input{ color: #b6ada2; text-decoration: line-through; }
+  .col-cod{ width:52px; } .col-qt{ width:52px; } .col-custo{ width:70px; } .col-obs{ width:56px; text-align:center; }
+  .row-del{ background:none;border:none;color:#c65d2e;cursor:pointer; font-size:16px; line-height:1; padding:2px 6px; }
+  .row-del:hover{ color:#8a2e17; }
+  .add-row-btn{
+    font-family:'Helvetica Neue',Arial,sans-serif; font-size:12px; color: var(--leaf);
+    background:none; border:none; cursor:pointer; margin-top:10px; padding:4px 0; font-weight:600;
+  }
+  .note{
+    font-family:'Helvetica Neue',Arial,sans-serif; font-size: 11.5px; color: var(--warn-ink);
+    background: var(--warn-bg); border-radius:5px; padding:10px 12px; margin-top:14px; line-height:1.5;
+  }
+  .footer-note{ text-align:center; font-family:'Helvetica Neue',Arial,sans-serif; font-size:11px; color:var(--ink-soft); margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <h1>Agente Romaneio</h1>
+    <span class="stamp">FOTO → PDF</span>
+  </div>
+  <p class="tagline">Envie a foto de um romaneio manuscrito e receba uma tabela conferível, pronta para exportar em PDF.</p>
+
+  <div class="card">
+    <div class="section-title">1. Enviar foto</div>
+    <div id="dropzone" class="dropzone">
+      <span class="icon">📋</span>
+      <div class="label">Clique ou arraste a foto do romaneio aqui</div>
+      <div class="sub">JPG ou PNG</div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" />
+
+    <div id="previewRow" class="preview-row" style="display:none; margin-top:14px;">
+      <img id="previewImg" class="preview-thumb" />
+      <div class="preview-info">
+        <div class="fname" id="fname"></div>
+        <div class="fmeta" id="fmeta"></div>
+        <button class="link-btn" id="changeBtn">Trocar imagem</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="processBtn" disabled>Processar romaneio</button>
+    </div>
+
+    <div id="statusBox" class="status" style="display:none;"></div>
+    <div id="errorBox" class="error-box" style="display:none;"></div>
+  </div>
+
+  <div class="card" id="resultsCard" style="display:none;">
+    <div class="section-title">2. Conferir dados extraídos</div>
+
+    <div class="meta-row">
+      <div class="meta-field"><label>Empresa</label><input id="metaEmpresa" /></div>
+      <div class="meta-field"><label>Data</label><input id="metaData" style="width:110px;" /></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="col-cod">Cód.</th><th>Mercadoria</th><th class="col-qt">Qtde</th>
+          <th class="col-custo">Custo</th><th>Fornecedor</th><th class="col-obs">Obs.</th><th style="width:24px;"></th>
+        </tr>
+      </thead>
+      <tbody id="itemsBody"></tbody>
+    </table>
+
+    <button class="add-row-btn" id="addRowBtn">+ adicionar linha</button>
+
+    <div class="note">
+      Campos com "*" indicam leitura incerta pela IA — confira com o papel original antes de considerar final.
+      Você pode editar qualquer célula acima antes de gerar o PDF.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="pdfBtn">⬇ Baixar PDF</button>
+    </div>
+  </div>
+
+  <div class="footer-note">Feito com FastAPI + Claude. Nenhum dado é salvo no servidor após a resposta.</div>
+</div>
+
+<script>
+const API_BASE = ""; // mesmo domínio (backend serve o frontend)
+
+let uploadedFile = null;
+let itemsData = [];
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const previewRow = document.getElementById('previewRow');
+const previewImg = document.getElementById('previewImg');
+const fname = document.getElementById('fname');
+const fmeta = document.getElementById('fmeta');
+const changeBtn = document.getElementById('changeBtn');
+const processBtn = document.getElementById('processBtn');
+const statusBox = document.getElementById('statusBox');
+const errorBox = document.getElementById('errorBox');
+const resultsCard = document.getElementById('resultsCard');
+const itemsBody = document.getElementById('itemsBody');
+const metaEmpresa = document.getElementById('metaEmpresa');
+const metaData = document.getElementById('metaData');
+const addRowBtn = document.getElementById('addRowBtn');
+const pdfBtn = document.getElementById('pdfBtn');
+
+dropzone.addEventListener('click', () => fileInput.click());
+changeBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+
+['dragover','dragenter'].forEach(evt=>{
+  dropzone.addEventListener(evt, (e)=>{ e.preventDefault(); dropzone.classList.add('drag'); });
+});
+['dragleave','drop'].forEach(evt=>{
+  dropzone.addEventListener(evt, (e)=>{ e.preventDefault(); dropzone.classList.remove('drag'); });
+});
+dropzone.addEventListener('drop', (e)=>{ const f = e.dataTransfer.files[0]; if(f) handleFile(f); });
+fileInput.addEventListener('change', (e)=>{ const f = e.target.files[0]; if(f) handleFile(f); });
+
+function handleFile(file){
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = () => {
+    previewImg.src = reader.result;
+    fname.textContent = file.name;
+    fmeta.textContent = (file.size/1024).toFixed(0) + ' KB';
+    previewRow.style.display = 'flex';
+    dropzone.style.display = 'none';
+    processBtn.disabled = false;
+    errorBox.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function setStatus(msg, showSpinner){
+  if(!msg){ statusBox.style.display='none'; return; }
+  statusBox.style.display='flex';
+  statusBox.innerHTML = (showSpinner ? '<span class="spinner"></span>' : '') + '<span>'+msg+'</span>';
+}
+function setError(msg){
+  if(!msg){ errorBox.style.display='none'; return; }
+  errorBox.style.display='block';
+  errorBox.textContent = msg;
+}
+
+processBtn.addEventListener('click', async () => {
+  if(!uploadedFile) return;
+  processBtn.disabled = true;
+  setError(null);
+  setStatus('Lendo a imagem e extraindo os dados do romaneio…', true);
+  resultsCard.style.display = 'none';
+
+  try{
+    const formData = new FormData();
+    formData.append('image', uploadedFile);
+
+    const response = await fetch(`${API_BASE}/api/extract`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if(!response.ok){
+      const errData = await response.json().catch(()=>({}));
+      throw new Error(errData.detail || ('Erro do servidor (status ' + response.status + ')'));
+    }
+
+    const parsed = await response.json();
+
+    itemsData = (parsed.itens || []).map(it => ({
+      codigo: it.codigo || '', mercadoria: it.mercadoria || '', quantidade: it.quantidade || '',
+      custo: it.custo || '', fornecedor: it.fornecedor || '', observacao: it.observacao || ''
+    }));
+
+    metaEmpresa.value = parsed.empresa || '';
+    metaData.value = parsed.data || '';
+
+    renderTable();
+    setStatus(itemsData.length + ' itens extraídos. Confira e edite se necessário.', false);
+    resultsCard.style.display = 'block';
+    resultsCard.scrollIntoView({behavior:'smooth', block:'start'});
+
+  }catch(err){
+    console.error(err);
+    setStatus(null);
+    setError('Não foi possível processar a imagem: ' + err.message);
+  }finally{
+    processBtn.disabled = false;
+  }
+});
+
+function renderTable(){
+  itemsBody.innerHTML = '';
+  itemsData.forEach((item, idx) => {
+    const tr = document.createElement('tr');
+    const riscado = item.quantidade === '-' ? 'riscado' : '';
+    tr.innerHTML = `
+      <td class="col-cod ${riscado}"><input data-idx="${idx}" data-field="codigo" value="${escapeHtml(item.codigo)}"></td>
+      <td class="${riscado}"><input data-idx="${idx}" data-field="mercadoria" value="${escapeHtml(item.mercadoria)}"></td>
+      <td class="col-qt ${riscado}"><input data-idx="${idx}" data-field="quantidade" value="${escapeHtml(item.quantidade)}"></td>
+      <td class="col-custo ${riscado}"><input data-idx="${idx}" data-field="custo" value="${escapeHtml(item.custo)}"></td>
+      <td class="${riscado}"><input data-idx="${idx}" data-field="fornecedor" value="${escapeHtml(item.fornecedor)}"></td>
+      <td class="col-obs ${riscado}"><input data-idx="${idx}" data-field="observacao" value="${escapeHtml(item.observacao)}"></td>
+      <td><button class="row-del" data-idx="${idx}" title="Remover linha">×</button></td>
+    `;
+    itemsBody.appendChild(tr);
+  });
+
+  itemsBody.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input', (e)=>{
+      const idx = parseInt(e.target.dataset.idx);
+      const field = e.target.dataset.field;
+      itemsData[idx][field] = e.target.value;
+    });
+  });
+  itemsBody.querySelectorAll('.row-del').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const idx = parseInt(e.target.dataset.idx);
+      itemsData.splice(idx,1);
+      renderTable();
+    });
+  });
+}
+
+function escapeHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+addRowBtn.addEventListener('click', ()=>{
+  itemsData.push({codigo:'',mercadoria:'',quantidade:'',custo:'',fornecedor:'',observacao:''});
+  renderTable();
+});
+
+pdfBtn.addEventListener('click', async ()=>{
+  pdfBtn.disabled = true;
+  setError(null);
+  try{
+    const payload = {
+      empresa: metaEmpresa.value || 'Romaneio',
+      data: metaData.value || '-',
+      itens: itemsData
+    };
+
+    const response = await fetch(`${API_BASE}/api/pdf`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if(!response.ok){
+      const errData = await response.json().catch(()=>({}));
+      throw new Error(errData.detail || ('Erro ao gerar PDF (status ' + response.status + ')'));
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const fileSafe = (metaEmpresa.value || 'romaneio').replace(/[^a-zA-Z0-9]+/g,'_').toLowerCase();
+    a.download = `romaneio_${fileSafe}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+  }catch(err){
+    setError('Não foi possível gerar o PDF: ' + err.message);
+  }finally{
+    pdfBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
