@@ -51,6 +51,8 @@ agente-romaneio-pdf/
 ## 🚀 Como rodar localmente
 
 ### Pré-requisitos
+- Baixe a imagem exemplo que deixei disponivel, pois a versão atual só funciona
+  com um modelo especifico de romaneio (em breve sera atualizado para rodar em qualquer tipo de imagem)
 - [Docker](https://www.docker.com/get-started) instalado, **ou** Python 3.11+
 - Uma chave de API da Anthropic — gere gratuitamente em
   [console.anthropic.com](https://console.anthropic.com/settings/keys)
